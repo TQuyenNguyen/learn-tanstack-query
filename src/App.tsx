@@ -1,28 +1,37 @@
 import { useProfile } from '@/hooks';
+import { useState } from 'react';
 
-const App: React.FC = () => {
-  const { data: userProfile, isLoading, isError, error } = useProfile();
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { data: profile, isLoading, error } = useProfile({ enabled: isLoggedIn });
+
+  const toggleLogin = () => {
+    setIsLoggedIn(!isLoggedIn);
+  };
 
   if (isLoading) {
     return <div>Loading profile...</div>;
   }
 
-  if (isError) {
-    return <div>Error: {error.message}</div>;
+  if (error) {
+    return <div>Error loading profile: {error.message}</div>;
   }
 
   return (
-    <div>
-      <h1>User Profile</h1>
-      {userProfile && (
-        <div>
-          <p>Name: {userProfile.name}</p>
-          <p>Email: {userProfile.email}</p>
-          {/* Render other user profile data as needed */}
-        </div>
-      )}
+    <div className="App">
+      <header className="App-header">
+        <h1>Profile</h1>
+        <button onClick={toggleLogin}>Toggle login</button>
+        {isLoggedIn && profile && (
+          <div>
+            <p>Name: {profile.name}</p>
+            <p>Email: {profile.email}</p>
+            {/* Render other profile data as needed */}
+          </div>
+        )}
+      </header>
     </div>
   );
-};
+}
 
 export default App;
